@@ -1,8 +1,6 @@
 package org.example.crawler_api.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.Date;
@@ -13,16 +11,28 @@ import java.util.Date;
 public class Document {
 
     @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private  int id;
+    @Column(name = "url", length = 1000)
     private  String url;
-    private  int siteId;
+    @Column(name = "site_id")
+    private  Integer siteId;
+    @Column(name = "status")
     private  String status;
+    @Column(name = "parent_url",  length = 1000)
     private  String parentUrl;
-    private  String html;
+    @Column(name = "title")
+    private  String title;
+    @Column(name = "insert_date")
     private  Date insertDate;
+    @Column(name = "scan_date")
     private  Date scanDate;
+    @Column(name = "http_status")
     private  String httpStatus;
+    @Column(name = "level")
     private  int level;
+    @Column(name = "content",  length = 1000000)
     private  String content;
 
 
