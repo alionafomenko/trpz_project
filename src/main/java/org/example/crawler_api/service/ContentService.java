@@ -1,9 +1,7 @@
 package org.example.crawler_api.service;
 
 import org.example.crawler_api.model.Content;
-import org.example.crawler_api.model.Document;
 import org.example.crawler_api.repository.ContentRepository;
-import org.example.crawler_api.repository.DocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +16,6 @@ public class ContentService {
     public ContentService() {
 
     }
-
-
 
     public List<Content> getSearchContent(String searchPhrase) {
         return contentRepository.getSearchContent(searchPhrase);

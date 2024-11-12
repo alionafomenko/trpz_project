@@ -6,6 +6,7 @@ import lombok.Data;
 import java.util.Date;
 
 @Data
+@Entity
 public class Content {
 
 
@@ -14,6 +15,9 @@ public class Content {
     private  String docUrl;
     private  String docTitle;
     private  String content;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     public String getSiteUrl() {
         return siteUrl;
@@ -53,5 +57,13 @@ public class Content {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
     }
 }
