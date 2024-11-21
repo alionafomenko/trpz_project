@@ -1,9 +1,11 @@
 package org.example.crawler_api.controller;
 
 
+import org.example.crawler_api.model.Admin;
 import org.example.crawler_api.model.Content;
 import org.example.crawler_api.model.Picture;
 import org.example.crawler_api.model.Site;
+import org.example.crawler_api.service.AdminService;
 import org.example.crawler_api.service.ContentService;
 import org.example.crawler_api.service.PictureService;
 import org.example.crawler_api.service.SiteService;
@@ -20,12 +22,13 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/")
+@SessionAttributes("admin")
 public class SiteController {
 
     @Autowired SiteService siteService;
     @Autowired PictureService pictureService;
-    @Autowired
-    ContentService contentService;
+    @Autowired ContentService contentService;
+    @Autowired AdminService adminService;
 
 
     @GetMapping("/")
@@ -77,6 +80,81 @@ public class SiteController {
 
         // Return the error message in the response body
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/admin")
+    public String adminLog(){
+        return "adminlog";
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestParam(name = "login", required = true, defaultValue = "none") String login,
+                        @RequestParam(name = "password", required = true, defaultValue = "none") String password,
+                        Model model) {
+
+        Admin admin = adminService.loginAdmin(login, password);
+        System.out.println(admin);
+        if (admin != null && admin.getLogin() != null) {
+            model.addAttribute("admin", admin);
+            System.out.println("LOGIN");
+            return "redirect:/adminPage";
+        } else {
+            String error = "no_such_admin";
+            model.addAttribute("error", error);
+            return "adminlog";
+
+        }
+
+
+    }
+
+    @GetMapping("/adminPage")
+    public String adminPage(Model model) {
+        Admin admin = (Admin) model.asMap().get("admin");
+        if (admin != null) {
+            List<Site> sitelist = siteService.getAllSitesForAdmin();
+            System.out.println(sitelist);
+            if (sitelist.isEmpty()){
+                model.addAttribute("emptyList", "No sites to approve");
+            }
+            model.addAttribute("sites", sitelist);
+
+
+            return "adminPage";
+        } else {
+            return "redirect:/admin";
+        }
+
+    }
+
+    @PostMapping("/approve")
+    public String approveSite(@RequestParam(name = "siteId") int siteId,
+                              Model model) {
+        Admin admin = (Admin) model.asMap().get("admin");
+        if (admin != null) {
+            adminService.approveSite(admin.getId(), siteId);
+
+            return "redirect:/adminPage";
+        } else {
+            return "redirect:/admin";
+        }
+
+
+    }
+
+    @PostMapping("/reject")
+    public String rejectSite(@RequestParam(name = "siteId") int siteId,
+                              Model model) {
+        Admin admin = (Admin) model.asMap().get("admin");
+        if (admin != null) {
+            adminService.rejectSite(siteId);
+
+            return "redirect:/adminPage";
+        } else {
+            return "redirect:/admin";
+        }
+
+
     }
 
 

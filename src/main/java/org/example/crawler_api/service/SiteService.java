@@ -27,4 +27,10 @@ public class SiteService {
         return siteRepository.getAllSites();
     }
 
+    public List<Site> getAllSitesForAdmin(){
+        return siteRepository.getAllSitesForAdmin();
+    }
+
+
+
 }

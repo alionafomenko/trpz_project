@@ -7,8 +7,8 @@ import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.Date;
 
+@Data
 @Entity
-
 public class Site {
 
     @Id

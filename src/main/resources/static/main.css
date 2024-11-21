@@ -261,6 +261,54 @@ body {
     margin-right: 15px;
 }
 
+.buttons{
+    display: flex
+}
+
+.approve-button {
+    margin-right: 10px;
+    background-color: #4CAF50; /* Зелёный цвет */
+    color: white; /* Цвет текста */
+    width: 90px;
+    border: none; /* Убираем границу */
+    border-radius: 5px; /* Скругление углов */
+    padding: 10px; /* Отступы внутри кнопки */
+    font-size: 16px; /* Размер текста */
+    cursor: pointer; /* Курсор "указатель" при наведении */
+    transition: background-color 0.3s ease; /* Плавный переход цвета при наведении */
+}
+
+.reject-button {
+    background-color: #f44336; /* Зелёный цвет */
+    color: white; /* Цвет текста */
+    width: 90px;
+    border: none; /* Убираем границу */
+    border-radius: 5px; /* Скругление углов */
+    padding: 10px 20px; /* Отступы внутри кнопки */
+    font-size: 16px; /* Размер текста */
+    cursor: pointer; /* Курсор "указатель" при наведении */
+    transition: background-color 0.3s ease; /* Плавный переход цвета при наведении */
+}
+
+.approve-button:hover {
+    background-color: #45a049; /* Цвет при наведении */
+}
+
+.approve-button:active {
+    background-color: #3e8e41; /* Цвет при нажатии */
+    transform: scale(0.95); /* Лёгкое уменьшение кнопки при клике */
+}
+
+
+.reject-button:hover {
+    background-color: #e53935; /* Цвет при наведении */
+}
+
+.reject-button:active {
+    background-color: #d32f2f; /* Цвет при нажатии */
+    transform: scale(0.95); /* Лёгкое уменьшение кнопки при клике */
+}
+
 p {
     margin-block-start: 0.25em;
     margin-block-end: 0.25em;
