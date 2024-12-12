@@ -1,101 +1,43 @@
 package org.example.crawler_api.job;
 
-import org.example.crawler_api.service.DocumentService;
-import org.example.crawler_api.service.PictureService;
-import org.example.crawler_api.service.SiteService;
-import org.jsoup.HttpStatusException;
-import org.jsoup.Jsoup;
-import org.jsoup.UnsupportedMimeTypeException;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.example.crawler_api.composite.URLComposite;
+import org.example.crawler_api.composite.URLLeaf;
+import org.example.crawler_api.errorHandler.ErrorHandler;
+import org.example.crawler_api.errorHandler.implError.GenericErrorHandler;
+import org.example.crawler_api.errorHandler.implError.HttpStatusErrorHandler;
+import org.example.crawler_api.errorHandler.implError.TimeoutErrorHandler;
+import org.example.crawler_api.template.BasicCrawler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.List;
 
 @Component
 public class ParseTask {
 
     @Autowired
-    PictureService pictureService;
-    @Autowired
-    DocumentService documentService;
+    private BasicCrawler crawler;
 
     @Scheduled(fixedDelay = 10000)
-    public void parseSite() {
+    public void parseSite() throws Exception {
+        System.out.println("parseTask");
+        List<org.example.crawler_api.model.Document> documentList = crawler.documentService.getAllDocs();
+        System.out.println(documentList);
 
-        List<org.example.crawler_api.model.Document> documentList = documentService.getAllDocs();
+
+        URLComposite rootComposite = new URLComposite();
+
 
         for (org.example.crawler_api.model.Document document : documentList) {
-           // System.out.println("Level------- " + document.getLevel());
-                int level = document.getLevel();
-                if (level < 5) {
-                    level++;
-                    String url = document.getUrl();
-                    System.out.println(url);
-                    StringBuilder content = new StringBuilder();
-                    String title = "";
-                    int httpStatus = 0;
-                    try {
-                        Document doc = Jsoup.connect(url)
-                                .userAgent("AlionaCrawler")
-                                .timeout(5000)
-                                .followRedirects(true)
-                                .referrer("https://google.com")
-                                .get();
-                        Elements sites = doc.getAllElements();
-                        httpStatus = doc.connection().response().statusCode();
-                        for (Element el : sites) {
-                            String tagName = el.tagName();
-                            if (tagName.equals("a")) {
-                                String link = el.attr("href");
-                                if (!link.endsWith(".jpg") && !link.endsWith(".png") && !link.endsWith(".jpeg") && !link.endsWith(".svg")) {
-                                    if (!link.startsWith("http")) {
-                                        if (link.startsWith("/")) {
-                                            documentService.addDoc(document.getSiteId() ,link, document.getUrl(), "to_do", level);
-                                        }
-                                    } else {
-                                        documentService.addDoc(document.getSiteId() ,link, document.getUrl(), "external_link", 0);
-                                    }
-                                } else {
-                                    pictureService.addPicture(document.getSiteId(), link, document.getUrl());
-                                }
-                            } else if (tagName.equals("img")) {
-                                String picLink = el.attr("src");
-                                pictureService.addPicture(document.getSiteId(), picLink, document.getUrl());
-                            } else if (tagName.equals("title")) {
-                                title = el.ownText();
-                            }
-
-                            String text = el.ownText();
-                            if (!text.isEmpty()) {
-                                content.append("<p>").append(text).append("</p>\n");
-
-                            }
-                        }
-                        String finalContent = content.toString();
-                        documentService.saveContent(document.getId(), title, finalContent, "scanned", httpStatus);
-
-
-                    } catch (HttpStatusException e) {
-                        httpStatus = e.getStatusCode();
-                    } catch (SocketTimeoutException e) {
-                        httpStatus = 0;
-                    } catch (UnsupportedMimeTypeException e) {
-                        httpStatus = 415;
-                    } catch (IOException e) {
-                        httpStatus = 500;
-                    } finally {
-
-                        documentService.saveContent(document.getId(), title, content.toString(), "scanned", httpStatus);
-                    }
-                }
+            int level = document.getLevel();
+            if (level < 5) {
+                rootComposite.add(new URLLeaf(document.getUrl(), document.getSiteId(), level + 1, document.getId(), crawler));
+            }
         }
 
-
+        rootComposite.crawl();
     }
 }
+

@@ -21,6 +21,7 @@ public class Document {
     private  String httpStatus;
     private  int level;
     private  String content;
+    private int nodeId;
 
     public int getId() {
         return id;
@@ -108,5 +109,13 @@ public class Document {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public int getNodeId() {
+        return nodeId;
+    }
+
+    public void setNodeId(int nodeId) {
+        this.nodeId = nodeId;
     }
 }

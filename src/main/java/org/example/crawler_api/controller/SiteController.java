@@ -1,21 +1,17 @@
 package org.example.crawler_api.controller;
 
 
-import org.example.crawler_api.model.Admin;
-import org.example.crawler_api.model.Content;
-import org.example.crawler_api.model.Picture;
-import org.example.crawler_api.model.Site;
-import org.example.crawler_api.service.AdminService;
-import org.example.crawler_api.service.ContentService;
-import org.example.crawler_api.service.PictureService;
-import org.example.crawler_api.service.SiteService;
+import org.example.crawler_api.model.*;
+import org.example.crawler_api.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +24,8 @@ public class SiteController {
     @Autowired SiteService siteService;
     @Autowired PictureService pictureService;
     @Autowired ContentService contentService;
+    @Autowired
+    DocumentService documentService;
     @Autowired AdminService adminService;
 
 
@@ -153,10 +151,35 @@ public class SiteController {
         } else {
             return "redirect:/admin";
         }
+    }
 
+    @ResponseBody
+    @GetMapping("/getdocumentsfromnode/{lastsyncdocdate}")
+    public List<Document> getDocumentsFromNode(
+            @PathVariable  String lastsyncdocdate) {
+         System.out.println("response date " + lastsyncdocdate);
+         String lastSyncDocDate = lastsyncdocdate.replace("%20", " ");
+        return documentService.getDocumentsFromNode(lastSyncDocDate);
+    }
 
+    @ResponseBody
+    @GetMapping("/getsitesfromnode/{lastsyncsitedate}")
+    public List<Site> getSitesFromNode(
+            @PathVariable  String lastsyncsitedate) {
+        System.out.println("response date " + lastsyncsitedate);
+        String lastSyncSiteDate = lastsyncsitedate.replace("%20", " ");
+        return siteService.getSitesFromNode(lastSyncSiteDate);
     }
 
 
+
+   /* @ResponseBody
+    @GetMapping("/getresultsfromnode")
+    public List<Document> getResultsFromNode(@PathVariable String lastSyncDocDate){
+
+        return documentService.getDocumentsFromNode();
+    }
+
+*/
 
 }

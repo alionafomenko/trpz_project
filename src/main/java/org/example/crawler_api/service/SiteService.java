@@ -1,6 +1,7 @@
 package org.example.crawler_api.service;
 
 import netscape.javascript.JSObject;
+import org.example.crawler_api.model.Document;
 import org.example.crawler_api.model.Site;
 import org.example.crawler_api.repository.SiteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,17 @@ public class SiteService {
 
     public List<Site> getAllSitesForAdmin(){
         return siteRepository.getAllSitesForAdmin();
+
+
+    }
+
+    public String addSyncSite(int siteId, String url, String title, String insertDate, int docCount, int picCount) {
+        return siteRepository.addSyncSite(siteId, url, title, insertDate, docCount, picCount);
+    }
+
+
+    public List<Site> getSitesFromNode(String lastSyncDocDate) {
+        return siteRepository.getSitesFromNode(lastSyncDocDate);
     }
 
 
