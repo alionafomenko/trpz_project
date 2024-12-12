@@ -21,11 +21,11 @@ public interface NodeRepository extends JpaRepository<Node, Long> {
     @Query(value = "SELECT * FROM trpz.update_site_sync_date(?1, ?2)", nativeQuery = true)
     void updateSiteSyncDate(int nodeId, Date lastDate);
 
-   /* @Query(value = "SELECT * FROM trpz.update_pic_sync_date(?1, ?2)", nativeQuery = true)
-    void updateDocSyncDate(int nodeId, Date lastDate);
+    @Query(value = "SELECT * FROM trpz.update_pic_sync_date(?1, ?2)", nativeQuery = true)
+    void updatePicSyncDate(int nodeId, Date lastDate);
 
     @Query(value = "SELECT * FROM trpz.update_content_sync_date(?1, ?2)", nativeQuery = true)
-    void updateDocSyncDate(int nodeId, Date lastDate);*/
+    void updateContentSyncDate(int nodeId, Date lastDate);
 
 
 }

@@ -25,7 +25,7 @@ public abstract class AbstractCrawler {
     public void crawl(String url, int siteId, int level, int documentId) throws Exception {
         StringBuilder content = new StringBuilder();
         String title = "";
-        int httpStatus = 0;
+        String httpStatus = String.valueOf(0);
 
         PageState pageState = new PageState();
         System.out.println(url);
@@ -42,7 +42,7 @@ public abstract class AbstractCrawler {
             caretaker.save(pageState.saveStateToMemento());
 
             Elements elements = doc.getAllElements();
-            httpStatus = doc.connection().response().statusCode();
+            httpStatus = String.valueOf(doc.connection().response().statusCode());
 
             for (Element element : elements) {
                 processElement(element, siteId, level, url, content);
@@ -54,7 +54,7 @@ public abstract class AbstractCrawler {
             documentService.saveContent(documentId, title, content.toString(), "scanned", httpStatus);
 
         } catch (IOException e) {
-            httpStatus = handleIOException(e);
+            httpStatus = String.valueOf(handleIOException(e));
             System.out.println("error  " + httpStatus + "  url  " + url);
             documentService.saveContent(documentId, title, "", "error", httpStatus);
 

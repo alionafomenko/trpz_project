@@ -3,11 +3,10 @@ package org.example.crawler_api.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.example.crawler_api.model.Document;
-import org.example.crawler_api.model.Node;
-import org.example.crawler_api.model.Site;
+import org.example.crawler_api.model.*;
 import org.example.crawler_api.service.DocumentService;
 import org.example.crawler_api.service.NodeService;
+import org.example.crawler_api.service.PictureService;
 import org.example.crawler_api.service.SiteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -29,6 +28,8 @@ public class EndpointScheduler {
     SiteService siteService;
     @Autowired
     NodeService nodeService;
+    @Autowired
+    PictureService pictureService;
 
     @Autowired
     public EndpointScheduler(RestTemplate restTemplate) {
@@ -90,6 +91,59 @@ public class EndpointScheduler {
         }
     }
 
+
+    public void syncContent (Node node){
+        String lastSyncDate = node.getSyncContentDate().toString().replace(" ", "%20");
+        System.out.println(lastSyncDate + "replaced /////");
+        String url = "http://" + node.getIp() + ":" + node.getPort() + "/getcontentfromnode/" + lastSyncDate;
+        System.out.println(url);
+        try {
+            String response = restTemplate.getForObject(url, String.class);
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<Document> documentList = objectMapper.readValue(response, new TypeReference<List<Document>>() {
+            });
+            Date lastDate = node.getSyncContentDate();
+            for (Document document : documentList) {
+                documentService.addSyncContent( document.getUrl(), document.getTitle(), document.getScanDate().toString(), document.getContent(), document.getSiteId(), document.getInsertDate().toString(), document.getParentUrl(), document.getLevel(), document.getNodeId());
+                if (lastDate == null || document.getScanDate().compareTo(lastDate) > 0) {
+                    lastDate = document.getScanDate();
+                }
+
+            }
+            System.out.println("lastDate" + lastDate);
+            nodeService.updateContentSyncDate(node.getId(), lastDate);
+
+        } catch (Exception e) {
+            System.err.println("Error to call endpoint: " + e.getMessage());
+        }
+    }
+
+    public void syncPics (Node node){
+        String lastSyncDate = node.getSyncPicDate().toString().replace(" ", "%20");
+        String url = "http://" + node.getIp() + ":" + node.getPort() + "/getpicsfromnode/" + lastSyncDate;
+        System.out.println(url);
+        try {
+            String response = restTemplate.getForObject(url, String.class);
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<Picture> pictureList = objectMapper.readValue(response, new TypeReference<List<Picture>>() {
+            });
+            Date lastDate = node.getSyncPicDate();
+
+            for (Picture picture : pictureList) {
+                pictureService.addSyncPics(picture.getSiteId(), picture.getUrl(),picture.getParentUrl(),picture.getInsertDate().toString());
+                if (lastDate == null || picture.getInsertDate().compareTo(lastDate) > 0) {
+                    lastDate = picture.getInsertDate();
+                }
+
+            }
+            System.out.println("lastDate" + lastDate);
+            nodeService.updatePicSyncDate(node.getId(), lastDate);
+
+        } catch (Exception e) {
+            System.err.println("Error to call endpoint: " + e.getMessage());
+        }
+    }
+
     @Async
     @Scheduled(fixedDelay = 60000)
     public void getDocumentsFromNode() {
@@ -100,6 +154,10 @@ public class EndpointScheduler {
             syncSites(node);
 
             syncDocs(node);
+
+            syncContent(node);
+
+            syncPics(node);
 
         }
     }

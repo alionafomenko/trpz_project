@@ -16,6 +16,11 @@ public interface PictureRepository extends JpaRepository<Picture, Long> {
     @Query(value = "SELECT * FROM trpz.get_site_pictures_1_page(?1, ?2)", nativeQuery = true)
     List<Picture> getPicturesBySiteId(int siteId, int pageNumber);
 
+    @Query(value = "SELECT * from trpz.add_sync_pics(?1, ?2, ?3, ?4)", nativeQuery = true)
+    String addSyncPics(int siteId, String url, String parentUrl, String insertDate);
+
+    @Query(value = "SELECT * from trpz.get_pics_from_node(?1)", nativeQuery = true)
+    List<Picture> getPicsFromNode(String lastSyncPicDate);
 
 
 }

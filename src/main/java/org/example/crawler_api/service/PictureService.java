@@ -26,4 +26,13 @@ public class PictureService {
        return pictureRepository.getPicturesBySiteId(siteId, pageNumber);
     }
 
+    public List<Picture> getPicsFromNode(String lastSyncPicDate) {
+        return pictureRepository.getPicsFromNode(lastSyncPicDate);
+    }
+
+    public String addSyncPics(int siteId, String url, String parentUrl, String insertDate) {
+        return pictureRepository.addSyncPics(siteId, url, parentUrl, insertDate);
+    }
+
+
 }

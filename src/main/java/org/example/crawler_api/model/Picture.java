@@ -7,14 +7,12 @@ import java.util.Date;
 
 @Data
 @Entity
-
 public class Picture {
 
     @Id
-
     private  int id;
-    private  String url;
     private  int siteId;
+    private  String url;
     private  String parentUrl;
     private  Date insertDate;
 

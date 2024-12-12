@@ -10,6 +10,7 @@ import java.util.Date;
 @Data
 @Entity
 public class Node {
+
     @Id
     private  int id;
     private  String ip;

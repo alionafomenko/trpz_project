@@ -21,7 +21,6 @@ public class NodeService {
     public NodeService() {
 
     }
-
     public List<Node> getAllNodes() {
         return nodeRepository.getAllNodes();
     }
@@ -32,6 +31,13 @@ public class NodeService {
 
     public void updateSiteSyncDate(int nodeId, Date lastDate) {
         nodeRepository.updateSiteSyncDate(nodeId, lastDate);
+    }
+
+    public void updateContentSyncDate(int nodeId, Date lastDate) {
+        nodeRepository.updateContentSyncDate(nodeId, lastDate);
+    }
+    public void updatePicSyncDate(int nodeId, Date lastDate) {
+        nodeRepository.updatePicSyncDate(nodeId, lastDate);
     }
 
 

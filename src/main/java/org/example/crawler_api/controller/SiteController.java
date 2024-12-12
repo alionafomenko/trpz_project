@@ -171,15 +171,25 @@ public class SiteController {
         return siteService.getSitesFromNode(lastSyncSiteDate);
     }
 
-
-
-   /* @ResponseBody
-    @GetMapping("/getresultsfromnode")
-    public List<Document> getResultsFromNode(@PathVariable String lastSyncDocDate){
-
-        return documentService.getDocumentsFromNode();
+    @ResponseBody
+    @GetMapping("/getcontentfromnode/{lastsyncsitedate}")
+    public List<Document> getContentFromNode(
+            @PathVariable  String lastsyncsitedate) {
+        System.out.println("response date " + lastsyncsitedate);
+        String lastSyncSiteDate = lastsyncsitedate.replace("%20", " ");
+        return documentService.getContentFromNode(lastSyncSiteDate);
     }
 
-*/
+    @ResponseBody
+    @GetMapping("/getpicsfromnode/{lastsyncsitedate}")
+    public List<Picture> getPicsFromNode(
+            @PathVariable  String lastsyncsitedate) {
+        System.out.println("response date " + lastsyncsitedate);
+        String lastSyncPicDate = lastsyncsitedate.replace("%20", " ");
+        return pictureService.getPicsFromNode(lastSyncPicDate);
+    }
+
+
+
 
 }
